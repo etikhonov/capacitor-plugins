@@ -9,20 +9,33 @@ import type {
   WatchPositionCallback,
 } from './definitions';
 
+const geolocationToPosition = function (
+  geoPosition: GeolocationPosition,
+): Position {
+  return {
+    timestamp: geoPosition.timestamp,
+    coords: {
+      accuracy: geoPosition.coords.accuracy,
+      altitude: geoPosition.coords.altitude,
+      altitudeAccuracy: geoPosition.coords.altitudeAccuracy,
+      heading: geoPosition.coords.heading,
+      latitude: geoPosition.coords.latitude,
+      longitude: geoPosition.coords.longitude,
+      speed: geoPosition.coords.speed,
+      isMock: false,
+    },
+  };
+};
 export class GeolocationWeb extends WebPlugin implements GeolocationPlugin {
   async getCurrentPosition(options?: PositionOptions): Promise<Position> {
     return new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(
         pos => {
-          const coords: any = {
-            ...pos.coords,
-          };
-          coords.isMock = false;
-          const position: Position = {
-            ...pos,
-            coords,
-          };
-          resolve(position);
+          if (!pos) {
+            resolve(pos);
+            return;
+          }
+          resolve(geolocationToPosition(pos));
         },
         err => {
           reject(err);
@@ -43,15 +56,11 @@ export class GeolocationWeb extends WebPlugin implements GeolocationPlugin {
   ): Promise<CallbackID> {
     const id = navigator.geolocation.watchPosition(
       pos => {
-        const coords: any = {
-          ...pos.coords,
-        };
-        coords.isMock = false;
-        const position: Position = {
-          ...pos,
-          coords,
-        };
-        callback(position);
+        if (!pos) {
+          callback(pos);
+          return;
+        }
+        callback(geolocationToPosition(pos));
       },
       err => {
         callback(null, err);
