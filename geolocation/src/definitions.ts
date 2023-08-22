@@ -148,6 +148,12 @@ export interface Position {
      * @since 1.0.0
      */
     heading: number | null;
+
+    /**
+     * A Boolean value that indicates whether the coordinates was mocked.
+     * (on Web always false)
+     */
+    isMock: boolean;
   };
 }
 

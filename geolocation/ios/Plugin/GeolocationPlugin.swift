@@ -198,6 +198,19 @@ public class GeolocationPlugin: CAPPlugin, CLLocationManagerDelegate {
     func makePosition(_ location: CLLocation) -> JSObject {
         var ret = JSObject()
         var coords = JSObject()
+        var isMock = false
+        if #available(iOS 15.0, *) {
+            let isLocationSimulated = location.sourceInformation?.isSimulatedBySoftware ?? false
+            let isProducedByAccess = location.sourceInformation?.isProducedByAccessory ?? false
+                
+            let info = CLLocationSourceInformation(softwareSimulationState: isLocationSimulated, andExternalAccessoryState: isProducedByAccess)
+                
+            if info.isSimulatedBySoftware == true || info.isProducedByAccessory == true{
+                isMock = true
+            } else {
+                isMock = false
+            }
+        }
         coords["latitude"] = location.coordinate.latitude
         coords["longitude"] = location.coordinate.longitude
         coords["accuracy"] = location.horizontalAccuracy
@@ -205,6 +218,7 @@ public class GeolocationPlugin: CAPPlugin, CLLocationManagerDelegate {
         coords["altitudeAccuracy"] = location.verticalAccuracy
         coords["speed"] = location.speed
         coords["heading"] = location.course
+        coords["isMock"] = isMock
         ret["timestamp"] = Int((location.timestamp.timeIntervalSince1970 * 1000))
         ret["coords"] = coords
         return ret

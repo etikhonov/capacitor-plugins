@@ -227,6 +227,11 @@ public class GeolocationPlugin extends Plugin {
         coords.put("longitude", location.getLongitude());
         coords.put("accuracy", location.getAccuracy());
         coords.put("altitude", location.getAltitude());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            coords.put("isMock", location.isMock());
+        } else {
+            coords.put("isMock", location.isFromMockProvider());
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             coords.put("altitudeAccuracy", location.getVerticalAccuracyMeters());
         }

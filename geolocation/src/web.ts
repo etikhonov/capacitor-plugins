@@ -35,6 +35,7 @@ export class GeolocationWeb extends WebPlugin implements GeolocationPlugin {
   ): Promise<CallbackID> {
     const id = navigator.geolocation.watchPosition(
       pos => {
+        pos.coords.isMock = false;
         callback(pos);
       },
       err => {
