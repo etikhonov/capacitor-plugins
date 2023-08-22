@@ -8,7 +8,7 @@ name: Release geolocation
 
 defaults:
   run:
-    working-directory: ./geolocation
+    working-directory: geolocation
 
 jobs:
   build:
@@ -20,12 +20,15 @@ jobs:
       - name: get-npm-version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@v1.3.1
+        with:
+          path: geolocation
       - name: package-version-to-git-tag
         uses: pkgdeps/git-tag-action@v2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           github_repo: ${{ github.repository }}
           version: ${{ steps.package-version.outputs.current-version }}
+          git_commit_sha: ${{ github.sha }}
           git_tag_prefix: 'v'
       - name: Create release
         uses: ncipollo/release-action@v1
