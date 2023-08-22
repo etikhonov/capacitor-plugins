@@ -17,5 +17,12 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v3
+      - name: match-tag-to-package-version
+        id: match-tag-to-package-version
+        uses: geritol/match-tag-to-package-version@0.2.0
+        with:
+          TAG_PREFIX: v
       - name: Create release
         uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.match-tag-to-package-version.outputs.PACKAGE_VERSION }}
