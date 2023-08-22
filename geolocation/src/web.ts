@@ -14,7 +14,15 @@ export class GeolocationWeb extends WebPlugin implements GeolocationPlugin {
     return new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(
         pos => {
-          resolve(pos);
+          const coords: any = {
+            ...pos.coords,
+          };
+          coords.isMock = false;
+          const position: Position = {
+            ...pos,
+            coords,
+          };
+          resolve(position);
         },
         err => {
           reject(err);
@@ -35,8 +43,15 @@ export class GeolocationWeb extends WebPlugin implements GeolocationPlugin {
   ): Promise<CallbackID> {
     const id = navigator.geolocation.watchPosition(
       pos => {
-        pos.coords.isMock = false;
-        callback(pos);
+        const coords: any = {
+          ...pos.coords,
+        };
+        coords.isMock = false;
+        const position: Position = {
+          ...pos,
+          coords,
+        };
+        callback(position);
       },
       err => {
         callback(null, err);
